@@ -27,12 +27,20 @@ bool verificarFecha(int fecha)
     // verificar
     return true; // correcto
 }
-bool verificarCodigoVendedor(int codigo)
+// donando por un anonimo generozo de vendedores
+bool verificarCodigoVendedor(int codigo, Vendedor vendedores[], int tamaño)
 {
-    return true;
+    for (int i = 0; i < tamaño; i++)
+    {
+        if (vendedores[i].CodigoDeVendedor == codigo)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
-Venta cargarVenta()
+Venta cargarVenta(Vendedor vendedores[], int tamaño)
 {
     Venta Nventa;
     int control = 0;
@@ -68,7 +76,9 @@ Venta cargarVenta()
 
         cin >> Nventa.CodigoDeVendedor;
         control = 1;
-    } while (!verificarCodigoVendedor(Nventa.CodigoDeVendedor));
+     cout <<   vendedores[1].CodigoDeVendedor << endl;
+    }  while (!verificarCodigoVendedor(Nventa.CodigoDeVendedor, vendedores, tamaño));
+    // while (0);
 
     cout << "dame el codigo de producto" << endl;
     cin >> Nventa.CodigoDeProducto;
@@ -92,18 +102,7 @@ Venta cargarVenta()
 
     return Nventa;
 }
-// donando por un anonimo generozo de vendedores
-bool CodigoDeVendedorRepetido(int n_codigo, Vendedor vendedores[], int tamaño)
-{
-    for (int i = 0; i < tamaño; i++)
-    {
-        if (vendedores[i].CodigoDeVendedor == n_codigo)
-        {
-            return true;
-        }
-    }
-    return false;
-}
+
 void cargarVendedores(Vendedor vendedores[], int cantidadVendedores, int cantidadSucursales)
 {
     Sucursal sucursales[cantidadSucursales];
@@ -113,23 +112,25 @@ void cargarVendedores(Vendedor vendedores[], int cantidadVendedores, int cantida
         cout << "No se pudo abrir el archivo.";
     }
 
-    fread(sucursales, sizeof(Sucursal), 3, archivo);
-    fread(vendedores, sizeof(Vendedor), 4, archivo);
+    fread(sucursales, sizeof(Sucursal), cantidadSucursales, archivo); // solo pera recorrer las surcursales que ocupan el primer espacio de bits
+    fread(vendedores, sizeof(Vendedor), cantidadVendedores, archivo);
     fclose(archivo);
 
+    // solo lectura de control
     cout << "\n Vendedores \n";
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < cantidadVendedores; i++)
     {
         cout << "\n  Vendedor " << i + 1 << ": \n"
              << vendedores[i].Nombre;
         cout << " - Codigo: " << vendedores[i].CodigoDeVendedor;
         cout << " - Sucursal: " << vendedores[i].CodigoDeSucursal;
     }
+    cout << endl;
 }
 
 int main()
 {
-    int cantidadVendedores = 3;
+    int cantidadVendedores = 2;
     int tamañoVentasMax = 3; //!!debe ser 1000
     Venta ventasDia[tamañoVentasMax];
     Vendedor vendedores[cantidadVendedores];
@@ -139,7 +140,7 @@ int main()
     int cargarOtraVenta = 1;
     do
     {
-        cargarVenta();
+        cargarVenta(vendedores, cantidadVendedores);
 
         cout << "ingrese un 1 si quiere ingresar otra venta\n";
         cin >> cargarOtraVenta;

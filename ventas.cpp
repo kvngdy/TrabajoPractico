@@ -76,8 +76,8 @@ Venta cargarVenta(Vendedor vendedores[], int tamaño)
 
         cin >> Nventa.CodigoDeVendedor;
         control = 1;
-     cout <<   vendedores[1].CodigoDeVendedor << endl;
-    }  while (!verificarCodigoVendedor(Nventa.CodigoDeVendedor, vendedores, tamaño));
+        cout << vendedores[1].CodigoDeVendedor << endl;
+    } while (!verificarCodigoVendedor(Nventa.CodigoDeVendedor, vendedores, tamaño));
     // while (0);
 
     cout << "dame el codigo de producto" << endl;
@@ -128,24 +128,55 @@ void cargarVendedores(Vendedor vendedores[], int cantidadVendedores, int cantida
     cout << endl;
 }
 
+void escribirVenta(Venta nVenta)
+{
+    FILE *archivo = fopen("ventas_diarias.dat", "wb");
+
+    if (archivo != NULL)
+    {
+        fwrite(&nVenta, sizeof(nVenta), 1, archivo);
+        cout << "venta guardadad" << endl;
+        fclose(archivo);
+    }
+    else
+    {
+        cout << "ERRROR no se pudo guardar la venta" << endl;
+        escribirVenta(nVenta);
+    }
+}
+
+void leer(int tamaño)
+{
+    Venta ventas[tamaño];
+    FILE *archivo = fopen("ventas_diarias.dat", "rb");
+    fread(ventas, sizeof(Venta), tamaño, archivo);
+
+    cout << "Ventas del dia de hoy" << endl;
+    for (int i = 0; i < tamaño; i++)
+    {
+        cout << "cp " << ventas[i].CodigoDeVendedor << " monto " << ventas[i].monto << endl;
+    }
+}
 int main()
 {
-    int cantidadVendedores = 2;
     int tamañoVentasMax = 3; //!!debe ser 1000
-    Venta ventasDia[tamañoVentasMax];
-    Vendedor vendedores[cantidadVendedores];
-    cargarVendedores(vendedores, cantidadVendedores, 3);
+    Venta nVenta;
 
+    int cantidadVendedores = 2;
+
+    Vendedor vendedores[cantidadVendedores];
+    cargarVendedores(vendedores, cantidadVendedores, 3); // traemos datos
+leer(4);
     int i = 1;
     int cargarOtraVenta = 1;
     do
     {
-        cargarVenta(vendedores, cantidadVendedores);
-
+        nVenta = cargarVenta(vendedores, cantidadVendedores);
+        escribirVenta(nVenta);
         cout << "ingrese un 1 si quiere ingresar otra venta\n";
         cin >> cargarOtraVenta;
         i++;
-    } while (i <= 1000 && cargarOtraVenta == 1);
-
+    } while (i <= tamañoVentasMax && cargarOtraVenta == 1);
+    leer(i);
     return 0;
 }

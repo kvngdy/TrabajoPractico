@@ -35,25 +35,59 @@ bool verificarCodigoVendedor(int codigo)
 Venta cargarVenta()
 {
     Venta Nventa;
+    int control = 0;
     do
     {
-        cout << "dame la fecha en AAAAMMDD" << endl;
+        if (control == 0)
+        {
+            cout << "dame la fecha en AAAAMMDD" << endl;
+        }
+        else
+        {
+            cout << "ERROR EN EL FORMATO" << endl;
+            cout << "dame la fecha en AAAAMMDD" << endl;
+        }
+
         cin >> Nventa.fecha;
+        control = 1;
+
     } while (!verificarFecha(Nventa.fecha));
 
+    control = 0;
     do
     {
-        cout << "dame el codigo de vendedor" << endl;
-        cin >> Nventa.CodigoDeVendedor;
+        if (control == 0)
+        {
+            cout << "dame el codigo de vendedor" << endl;
+        }
+        else
+        {
+            cout << "codigo de vendedor inexistente" << endl;
+            cout << "dame el codigo de vendedor" << endl;
+        }
 
+        cin >> Nventa.CodigoDeVendedor;
+        control = 1;
     } while (!verificarCodigoVendedor(Nventa.CodigoDeVendedor));
 
     cout << "dame el codigo de producto" << endl;
     cin >> Nventa.CodigoDeProducto;
-    cout << "dame el monto de la Nventa" << endl;
+
+    control = 0;
     do
     {
-        cin >> Nventa.CodigoDeProducto;
+        if (control == 0)
+        {
+            cout << "dame el monto de la venta" << endl;
+        }
+        else
+        {
+            cout << "El monto de la venta No pude ser 0 ni negativo" << endl;
+            cout << "dame el monto de la venta" << endl;
+        }
+
+        cin >> Nventa.monto;
+        control = 1;
     } while (Nventa.monto <= 0);
 
     return Nventa;

@@ -22,10 +22,61 @@ struct Venta
     int CodigoDeProducto;
     int monto; //??dos espacios de deciamal hay que mostrar con coma de dos espacios (dividir en 100)
 };
+bool esBisiesto(int año)
+{
+    return (año % 4 == 0 && año % 100 != 0) || (año % 400 == 0);
+}
+
 bool verificarFecha(int fecha)
 {
-    // verificar
-    return true; // correcto
+    if (fecha < 19000101 || fecha > 20991231) //rango de año desde 1900 hasta 2099
+    {
+        return false;
+    }
+    int año = fecha / 10000;
+    int mes = (fecha / 100) % 100;
+    int dia = fecha % 100;
+
+    if (mes < 1 || mes > 12)
+    {
+        return false;
+    }
+    int diasEnMes[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if (mes == 2 && esBisiesto(año))
+    {
+        diasEnMes[1] = 29;
+    }
+    if (dia < 1 || dia > diasEnMes[mes - 1])
+    {
+        return false;
+    }
+    return true;
+}
+
+int cargarFecha()
+{
+    int control = 0;
+    int fecha;
+    do
+    {
+        if (control == 0)
+        {
+            cout << "dame la fecha en AAAAMMDD" << endl;
+        }
+        else
+        {
+            cout << "ERROR EN EL FORMATO" << endl;
+            cout << "dame la fecha en AAAAMMDD" << endl;
+        }
+
+        cin >> fecha;
+
+        control = 1;
+
+    } while (!verificarFecha(fecha));
+
+    return fecha;
 }
 // donando por un anonimo generozo de vendedores
 bool verificarCodigoVendedor(int codigo, Vendedor vendedores[], int tamaño)
@@ -40,28 +91,12 @@ bool verificarCodigoVendedor(int codigo, Vendedor vendedores[], int tamaño)
     return false;
 }
 
-Venta cargarVenta(Vendedor vendedores[], int tamaño)
+Venta cargarVenta(Vendedor vendedores[], int tamaño, int fecha)
 {
     Venta Nventa;
     int control = 0;
-    do
-    {
-        if (control == 0)
-        {
-            cout << "dame la fecha en AAAAMMDD" << endl;
-        }
-        else
-        {
-            cout << "ERROR EN EL FORMATO" << endl;
-            cout << "dame la fecha en AAAAMMDD" << endl;
-        }
+    Nventa.fecha = fecha;
 
-        cin >> Nventa.fecha;
-        control = 1;
-
-    } while (!verificarFecha(Nventa.fecha));
-
-    control = 0;
     do
     {
         if (control == 0)
@@ -76,9 +111,7 @@ Venta cargarVenta(Vendedor vendedores[], int tamaño)
 
         cin >> Nventa.CodigoDeVendedor;
         control = 1;
-        cout << vendedores[1].CodigoDeVendedor << endl;
     } while (!verificarCodigoVendedor(Nventa.CodigoDeVendedor, vendedores, tamaño));
-    // while (0);
 
     cout << "dame el codigo de producto" << endl;
     cin >> Nventa.CodigoDeProducto;
@@ -93,6 +126,7 @@ Venta cargarVenta(Vendedor vendedores[], int tamaño)
         else
         {
             cout << "El monto de la venta No pude ser 0 ni negativo" << endl;
+
             cout << "dame el monto de la venta" << endl;
         }
 
@@ -130,12 +164,12 @@ void cargarVendedores(Vendedor vendedores[], int cantidadVendedores, int cantida
 
 void escribirVenta(Venta nVenta)
 {
-    FILE *archivo = fopen("ventas_diarias.dat", "wb");
+    FILE *archivo = fopen("ventas_diarias.dat", "ab");
 
     if (archivo != NULL)
     {
         fwrite(&nVenta, sizeof(nVenta), 1, archivo);
-        cout << "venta guardadad" << endl;
+        cout << "venta guardada" << endl;
         fclose(archivo);
     }
     else
@@ -159,24 +193,25 @@ void leer(int tamaño)
 }
 int main()
 {
-    int tamañoVentasMax = 3; //!!debe ser 1000
+    int tamañoVentasMax = 6; //!!debe ser 1000
     Venta nVenta;
-
-    int cantidadVendedores = 2;
+    int fecha = cargarFecha();
+    int cantidadVendedores = 4;
 
     Vendedor vendedores[cantidadVendedores];
     cargarVendedores(vendedores, cantidadVendedores, 3); // traemos datos
-leer(4);
     int i = 1;
     int cargarOtraVenta = 1;
+
     do
     {
-        nVenta = cargarVenta(vendedores, cantidadVendedores);
+        nVenta = cargarVenta(vendedores, cantidadVendedores, fecha);
         escribirVenta(nVenta);
         cout << "ingrese un 1 si quiere ingresar otra venta\n";
         cin >> cargarOtraVenta;
         i++;
-    } while (i <= tamañoVentasMax && cargarOtraVenta == 1);
+    } while (true);
     leer(i);
+    cout << "toal de ventas " << i;
     return 0;
 }

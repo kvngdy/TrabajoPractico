@@ -165,12 +165,15 @@ void cargarVendedores(Vendedor vendedores[], int cantidadVendedores, int cantida
 void escribirVenta(Venta nVenta, int numeroVenta)
 {
     FILE *archivo;
-    if (numeroVenta = 1)
+    if (numeroVenta == 1)
     {
+        cout << "es el primer dia\n";
         archivo = fopen("ventas_diarias.dat", "wb"); // sobre escribe el archivo si existe
+        // archivo = fopen("ventas_diarias.dat", "ab");
     }
     else
     {
+        cout << "ya  no es el primer dia\n";
 
         archivo = fopen("ventas_diarias.dat", "ab");
     }
@@ -216,7 +219,7 @@ int main()
 
     Vendedor vendedores[cantidadVendedores];
     cargarVendedores(vendedores, cantidadVendedores, 3); // traemos datos
-    int i = 1;
+    int i = 0;
     int cargarOtraVenta = 1;
 
     do
@@ -226,9 +229,10 @@ int main()
         cout << "ingrese un 1 si quiere ingresar otra venta\n";
         cin >> cargarOtraVenta;
         i++;
-    } while (i <= 2);
+    } while (i <= tamañoVentasMax && cargarOtraVenta == 1);
     FILE *archivo = fopen("ventas_diarias.dat", "ab");
-    fwrite(&i, sizeof(i), 1, archivo);
+    i--;
+    fwrite(&i, sizeof(i), 1, archivo); //!! agregamos la cantidad de ventas realizadas en el dia.
     fclose(archivo);
     leer();
     cout << "toal de ventas " << i;

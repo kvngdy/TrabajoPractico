@@ -29,7 +29,7 @@ bool esBisiesto(int año)
 
 bool verificarFecha(int fecha)
 {
-    if (fecha < 19000101 || fecha > 20991231) //rango de año desde 1900 hasta 2099
+    if (fecha < 19000101 || fecha > 20991231) // rango de año desde 1900 hasta 2099
     {
         return false;
     }
@@ -162,9 +162,18 @@ void cargarVendedores(Vendedor vendedores[], int cantidadVendedores, int cantida
     cout << endl;
 }
 
-void escribirVenta(Venta nVenta)
+void escribirVenta(Venta nVenta, int numeroVenta)
 {
-    FILE *archivo = fopen("ventas_diarias.dat", "ab");
+    FILE *archivo;
+    if (numeroVenta = 1)
+    {
+        archivo = fopen("ventas_diarias.dat", "wb"); // sobre escribe el archivo si existe
+    }
+    else
+    {
+
+        archivo = fopen("ventas_diarias.dat", "ab");
+    }
 
     if (archivo != NULL)
     {
@@ -175,14 +184,20 @@ void escribirVenta(Venta nVenta)
     else
     {
         cout << "ERRROR no se pudo guardar la venta" << endl;
-        escribirVenta(nVenta);
+        escribirVenta(nVenta, numeroVenta); // trata de ejecutarlo de nuevo
     }
 }
 
-void leer(int tamaño)
+void leer()
+
 {
-    Venta ventas[tamaño];
     FILE *archivo = fopen("ventas_diarias.dat", "rb");
+    int tamaño;
+    fseek(archivo, -sizeof(int), SEEK_END);
+    fread(&tamaño, sizeof(int), 1, archivo);
+    cout << " el tamaño es " << tamaño << endl;
+    fseek(archivo, 0, SEEK_SET);
+    Venta ventas[tamaño];
     fread(ventas, sizeof(Venta), tamaño, archivo);
 
     cout << "Ventas del dia de hoy" << endl;
@@ -195,7 +210,8 @@ int main()
 {
     int tamañoVentasMax = 6; //!!debe ser 1000
     Venta nVenta;
-    int fecha = cargarFecha();
+    // int fecha = cargarFecha();
+    int fecha = 12;
     int cantidadVendedores = 4;
 
     Vendedor vendedores[cantidadVendedores];
@@ -206,12 +222,15 @@ int main()
     do
     {
         nVenta = cargarVenta(vendedores, cantidadVendedores, fecha);
-        escribirVenta(nVenta);
+        escribirVenta(nVenta, i);
         cout << "ingrese un 1 si quiere ingresar otra venta\n";
         cin >> cargarOtraVenta;
         i++;
-    } while (true);
-    leer(i);
+    } while (i <= 2);
+    FILE *archivo = fopen("ventas_diarias.dat", "ab");
+    fwrite(&i, sizeof(i), 1, archivo);
+    fclose(archivo);
+    leer();
     cout << "toal de ventas " << i;
     return 0;
 }

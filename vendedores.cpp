@@ -142,7 +142,7 @@ int main() {
 	}
 
 	// cargar 4 vendedores
-	int tamaño = 2;
+	int tamaño = 4;
 	Vendedor vendedores[tamaño];
 
 	for (int i = 0; i < tamaño; i++) {

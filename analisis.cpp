@@ -1,13 +1,11 @@
 #include <iostream>
 #include <cstring>
 using namespace std;
-
 struct Sucursal
 {
 	char Nombre[32];
 	int CodigoDeSucursal;
 };
-
 struct Vendedor
 {
 	char Nombre[32];
@@ -36,16 +34,14 @@ void MostrarMayorVendedor(int TotalDeCadaVendedor[], int cantidadDeVendedores, V
 			alguienVendio = true;
 		}
 	}
-
 	if (!alguienVendio)
 	{
-		cout << "ERROR: NingC:n vendedor realizC3 ventas." << endl;
+		cout << "ERROR: Ningun vendedor realizo ventas." << endl;
 	}
 	else
 	{
-		cout << "El/los mayor(es) vendedor(es) vendieron $";
-		cout << (mayorMonto / 100) << "," << (mayorMonto % 100) << endl;
-
+		cout << "\nEl/los mayor(es) vendedor(es) vendieron $";
+		cout << (mayorMonto) << endl;
 		for (int i = 0; i < cantidadDeVendedores; i++)
 		{
 			if (TotalDeCadaVendedor[i] == mayorMonto)
@@ -69,21 +65,20 @@ void MostrarMayorSucursal(int TotalDeCadaSucursal[], int cantidadDeSucursales, S
 			alguienVendio = true;
 		}
 	}
-
 	if (!alguienVendio)
 	{
-		cout << "ERROR: NingC:n vendedor realizC3 ventas." << endl;
+		cout << "ERROR: Ningun vendedor realizo ventas." << endl;
 	}
 	else
 	{
-		cout << "La/las sucursal(es) con mayores ventas vendieron $";
-		cout << (mayorMonto / 100) << "," << (mayorMonto % 100) << endl;
-
+		cout << "\nLa/las sucursal(es) con mayores ventas vendieron $";
+		cout << mayorMonto << endl;
 		for (int i = 0; i < cantidadDeSucursales; i++)
 		{
 			if (TotalDeCadaSucursal[i] == mayorMonto)
 			{
-				cout << "- " << sucursales[i].Nombre << endl;
+				cout << "- " << sucursales[i].Nombre << "\n"
+					 << endl;
 			}
 		}
 	}
@@ -187,7 +182,7 @@ void OrdenarVentasPorCodigo(Venta ventas[], int cantidadDeVentas)
 
 	for (int i = 0; i < cantidadDeVentas; i++)
 	{
-		cout << ventas[i].CodigoDeProducto << endl;
+		cout << i + 1 << ". " << ventas[i].CodigoDeProducto << endl;
 	}
 }
 
@@ -196,48 +191,50 @@ void MostrarMejorProducto(Venta ventas[], int cantidadDeVentas)
 	int supraContador = 1;
 	int contador = 1;
 	int codigoAnterior = ventas[0].CodigoDeProducto;
-	int codigoActual = ventas[0].CodigoDeProducto; // esto no importa q valor tiene ahora
-	int codigoGanador = ventas[0].CodigoDeProducto;
+	int codigoGanador = codigoAnterior;
 
-	for (int i = 0; i < cantidadDeVentas; i++)
+	for (int i = 1; i < cantidadDeVentas; i++)
 	{
-		codigoActual = ventas[i].CodigoDeProducto;
-
-		if (codigoActual == codigoAnterior)
+		if (ventas[i].CodigoDeProducto == codigoAnterior)
 		{
-			// es el mismo producto
 			contador++;
 		}
 		else
 		{
-			// hubo un cambio de producto
 			if (contador > supraContador)
 			{
 				supraContador = contador;
 				codigoGanador = codigoAnterior;
 			}
 			contador = 1;
+			codigoAnterior = ventas[i].CodigoDeProducto;
 		}
-		codigoAnterior = codigoActual;
 	}
-	cout << "El producto que mas veces se vendio es: " << endl;
-	cout << codigoGanador << ", " << supraContador << " veces";
+
+	if (contador > supraContador)
+	{
+		supraContador = contador;
+		codigoGanador = codigoAnterior;
+	}
+
+	cout << "\nEl producto que mas veces se vendio es:" << endl;
+	cout << "-(" << codigoGanador << "), " << supraContador << " veces" << endl;
 }
 
 int obtenerCantidadDeVentas()
 {
 	FILE *archivo = fopen("ventas_diarias.dat", "rb");
 	int cantidad;
-	fseek(archivo, -sizeof(int), SEEK_END);
+	fseek(archivo, -(int)sizeof(int), SEEK_END);
 	fread(&cantidad, sizeof(int), 1, archivo);
 	fclose(archivo);
-	return cantidad - 1;
+	return cantidad;
 }
 
 int main()
 {
 	int cantidadSucursales = 3;
-	int cantidadDeVendedores = 4;
+	int cantidadDeVendedores = 15;
 	Sucursal sucursales[cantidadSucursales];
 	Vendedor vendedores[cantidadDeVendedores];
 

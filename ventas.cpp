@@ -17,10 +17,10 @@ struct Vendedor
 
 struct Venta
 {
-    int fecha; //! AAAAMMDD
+                                        int fecha; 
     int CodigoDeVendedor;
     int CodigoDeProducto;
-    int monto; //??dos espacios de deciamal hay que mostrar con coma de dos espacios (dividir en 100)
+    int monto; 
 };
 bool esBisiesto(int año)
 {
@@ -29,7 +29,7 @@ bool esBisiesto(int año)
 
 bool verificarFecha(int fecha)
 {
-    if (fecha < 19000101 || fecha > 20991231) // rango de año desde 1900 hasta 2099
+    if (fecha < 19000101 || fecha > 20991231) 
     {
         return false;
     }
@@ -62,12 +62,12 @@ int cargarFecha()
     {
         if (control == 0)
         {
-            cout << "dame la fecha en AAAAMMDD" << endl;
+            cout << "dame la fecha en AAAAMMDD: ";
         }
         else
         {
-            cout << "ERROR EN EL FORMATO" << endl;
-            cout << "dame la fecha en AAAAMMDD" << endl;
+            cout << "ERROR EN EL FORMATO\n";
+            cout << "dame la fecha en AAAAMMDD: ";
         }
 
         cin >> fecha;
@@ -78,7 +78,9 @@ int cargarFecha()
 
     return fecha;
 }
-// donando por un anonimo generozo de vendedores
+
+// donando por un anonimo generoso de vendedores!
+
 bool verificarCodigoVendedor(int codigo, Vendedor vendedores[], int tamaño)
 {
     for (int i = 0; i < tamaño; i++)
@@ -101,19 +103,19 @@ Venta cargarVenta(Vendedor vendedores[], int tamaño, int fecha)
     {
         if (control == 0)
         {
-            cout << "dame el codigo de vendedor" << endl;
+            cout << "\ndame el codigo de vendedor: ";
         }
         else
         {
-            cout << "codigo de vendedor inexistente" << endl;
-            cout << "dame el codigo de vendedor" << endl;
+            cout << "\ncodigo de vendedor inexistente \n";
+            cout << "dame el codigo de vendedor: ";
         }
 
         cin >> Nventa.CodigoDeVendedor;
         control = 1;
     } while (!verificarCodigoVendedor(Nventa.CodigoDeVendedor, vendedores, tamaño));
 
-    cout << "dame el codigo de producto" << endl;
+    cout << "dame el codigo de producto: ";
     cin >> Nventa.CodigoDeProducto;
 
     control = 0;
@@ -121,13 +123,13 @@ Venta cargarVenta(Vendedor vendedores[], int tamaño, int fecha)
     {
         if (control == 0)
         {
-            cout << "dame el monto de la venta" << endl;
+            cout << "\nDame el monto de la venta: " ;
         }
         else
         {
-            cout << "El monto de la venta No pude ser 0 ni negativo" << endl;
+            cout << "\nEl monto de la venta No pude ser 0 ni negativo" << endl;
 
-            cout << "dame el monto de la venta" << endl;
+            cout << "Dame el monto de la venta: ";
         }
 
         cin >> Nventa.monto;
@@ -143,50 +145,38 @@ void cargarVendedores(Vendedor vendedores[], int cantidadVendedores, int cantida
     FILE *archivo = fopen("vendedores.dat", "rb");
     if (archivo == NULL)
     {
-        cout << "No se pudo abrir el archivo.";
+        FILE *archivo = fopen("vendedores.exe", "rb");
+        if (archivo == NULL){
+            
+        }
     }
 
     fread(sucursales, sizeof(Sucursal), cantidadSucursales, archivo); // solo pera recorrer las surcursales que ocupan el primer espacio de bits
     fread(vendedores, sizeof(Vendedor), cantidadVendedores, archivo);
     fclose(archivo);
-
-    // solo lectura de control
-    cout << "\n Vendedores \n";
-    for (int i = 0; i < cantidadVendedores; i++)
-    {
-        cout << "\n  Vendedor " << i + 1 << ": \n"
-             << vendedores[i].Nombre;
-        cout << " - Codigo: " << vendedores[i].CodigoDeVendedor;
-        cout << " - Sucursal: " << vendedores[i].CodigoDeSucursal;
-    }
-    cout << endl;
 }
 
 void escribirVenta(Venta nVenta, int numeroVenta)
 {
     FILE *archivo;
-    if (numeroVenta == 1)
+    if (numeroVenta == 0)
     {
-        cout << "es el primer dia\n";
         archivo = fopen("ventas_diarias.dat", "wb"); // sobre escribe el archivo si existe
-        // archivo = fopen("ventas_diarias.dat", "ab");
     }
     else
     {
-        cout << "ya  no es el primer dia\n";
-
         archivo = fopen("ventas_diarias.dat", "ab");
     }
 
     if (archivo != NULL)
     {
         fwrite(&nVenta, sizeof(nVenta), 1, archivo);
-        cout << "venta guardada" << endl;
+        cout << "\nVenta guardada...\n";
         fclose(archivo);
     }
     else
     {
-        cout << "ERRROR no se pudo guardar la venta" << endl;
+        cout << "ERROR no se pudo guardar la venta" << endl;
         escribirVenta(nVenta, numeroVenta); // trata de ejecutarlo de nuevo
     }
 }
@@ -196,45 +186,48 @@ void leer()
 {
     FILE *archivo = fopen("ventas_diarias.dat", "rb");
     int tamaño;
-    fseek(archivo, -sizeof(int), SEEK_END);
+    fseek(archivo, -(int)sizeof(int), SEEK_END);
     fread(&tamaño, sizeof(int), 1, archivo);
-    cout << " el tamaño es " << tamaño << endl;
+    cout << "\nEl tamaño es: " << tamaño << endl;
     fseek(archivo, 0, SEEK_SET);
     Venta ventas[tamaño];
     fread(ventas, sizeof(Venta), tamaño, archivo);
 
-    cout << "Ventas del dia de hoy" << endl;
+    cout << "Ventas del dia de hoy:" << endl;
     for (int i = 0; i < tamaño; i++)
     {
-        cout << "cp " << ventas[i].CodigoDeVendedor << " monto " << ventas[i].monto << endl;
+        cout << "-CodigoDeVendedor: " << ventas[i].CodigoDeVendedor << " // monto: " << ventas[i].monto << endl;
     }
 }
 int main()
 {
-    int tamañoVentasMax = 6; //!!debe ser 1000
+    int tamañoVentasMax = 1000;
     Venta nVenta;
-    // int fecha = cargarFecha();
-    int fecha = 12;
-    int cantidadVendedores = 4;
+    int fecha = cargarFecha();
+    int cantidadVendedores = 15;
 
     Vendedor vendedores[cantidadVendedores];
     cargarVendedores(vendedores, cantidadVendedores, 3); // traemos datos
     int i = 0;
-    int cargarOtraVenta = 1;
+    char cargarOtraVenta = 'y';
 
     do
     {
         nVenta = cargarVenta(vendedores, cantidadVendedores, fecha);
         escribirVenta(nVenta, i);
-        cout << "ingrese un 1 si quiere ingresar otra venta\n";
+        cout << "\n¿Quieres ingresar otra venta?(y/n): ";
         cin >> cargarOtraVenta;
         i++;
-    } while (i <= tamañoVentasMax && cargarOtraVenta == 1);
+    } while (i <= tamañoVentasMax && cargarOtraVenta == 'y');
     FILE *archivo = fopen("ventas_diarias.dat", "ab");
-    i--;
-    fwrite(&i, sizeof(i), 1, archivo); //!! agregamos la cantidad de ventas realizadas en el dia.
+    fwrite(&i, sizeof(i), 1, archivo);
     fclose(archivo);
-    leer();
-    cout << "toal de ventas " << i;
+    if (i == tamañoVentasMax)
+    {
+        cout << "\n Ya hiciste las "<< tamañoVentasMax << "ventas de hoy, ahora a descansar" << endl;
+    }
+    
+    leer(); //mostramos un resumen de lac ventas de hoy 
+    cout << "\nTotal de ventas: " << i;
     return 0;
 }
